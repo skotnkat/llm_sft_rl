@@ -1,3 +1,2 @@
-ngrok
 https://github.com/adithyaxx/flash-attention/releases/download/v2.8.3/flash_attn-2.8.3+cu13torch2.11cxx11abiTRUE-cp312-cp312-linux_x86_64.whl
 lm_eval[vllm]
