@@ -1,0 +1,39 @@
+# Paths & Storage
+dataset_name: "HuggingFaceH4/ultrafeedback_binarized"
+model_name: "ibm-granite/granite-4.0-350m"
+experiment_name: "granite-ultrafeedback"
+run_name: "1000_steps_lr_5e-6_1_grad_clip_assistant_only"
+
+sample_num: 0
+
+
+lora:
+    use_lora: True
+    lora_rank: 16
+    lora_alpha: 32
+    target_modules: "all-linear"
+
+training:
+    # Training Parameters
+    num_train_epochs: 1
+    max_steps: 1000
+    assistant_only_loss: True
+    learning_rate: 5.0e-6
+    lr_scheduler_type: "cosine"
+    warmup_steps: 100
+    max_grad_norm: 1.0
+
+    # Batch Size & DataLoading
+    per_device_train_batch_size: 4
+    gradient_accumulation_steps: 8
+    dataloader_num_workers: 4
+    packing: True
+    
+
+    # Logging
+    logging_steps: 10
+    save_steps: 200
+    eval_strategy: "steps"
+    eval_steps: 20
+    report_to: ["mlflow"]
+    output_dir: "/storage/granite-sft-train/lr_5e-6_1_grad_clip_assist_only"
