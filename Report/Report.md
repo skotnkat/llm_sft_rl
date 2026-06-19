@@ -18,11 +18,11 @@
   - Different schedulers (cosine, linear)
   - Varying max gradient norm values
 
-The charts below show a representative run  with 100 warmup steps and a cosine scheduler, illustrating this typical pattern:
+The charts below show a representative run with 100 warmup steps and a cosine scheduler, illustrating this typical pattern:
 
-![Learning rate schedule](charts/learning_rate.png)
+![Learning rate schedule](exp_lr.webp)
 
-![Train and eval loss](charts/loss.png)
+![Train and eval loss](exp_loss.webp)
 
 ### Gradient Norm
 
