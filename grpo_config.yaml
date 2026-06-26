@@ -1,0 +1,43 @@
+# Paths & IDs
+dataset_name: "HuggingFaceH4/ultrafeedback_binarized"
+model_name: "ibm-granite/granite-4.0-350m"
+experiment_name: "granite-grpo-ultrafeedback"
+run_name: "grpo_run_1"
+
+sample_num: 2000
+
+reward_model_path: "/storage/reward-model"  # output of run_reward.py
+
+tokenizer:
+    train_padding_side: "left"    # left required for GRPO (does generation)
+    gen_padding_side: "left"
+
+lora:
+    use_lora: true
+    r: 16
+    lora_alpha: 32
+    target_modules: "all-linear"
+
+training:
+    output_dir: "/storage/granite-grpo-train"
+    max_completion_length: 512
+    num_generations: 8            # completions per prompt; reduce if OOM
+    num_train_epochs: 1
+    learning_rate: 1.0e-5
+    lr_scheduler_type: "cosine"
+    warmup_steps: 100
+    max_grad_norm: 1.0
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 4
+    dataloader_num_workers: 4
+    logging_steps: 10
+    save_steps: 200
+    eval_strategy: "steps"
+    eval_steps: 50
+    report_to: ["mlflow"]
+    # --- GRPO algorithm ---
+    beta: 0.01
+    loss_type: "grpo"
+    temperature: 0.9
+    mask_truncated_completions: true
+    log_completions: false
