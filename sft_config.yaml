@@ -2,9 +2,9 @@
 dataset_name: "HuggingFaceH4/ultrafeedback_binarized"
 model_name: "ibm-granite/granite-4.0-350m"
 experiment_name: "granite-ultrafeedback"
-run_name: "1000_steps_lr_5e-6_1_grad_clip_assistant_only"
+run_name: "assistant_only_loss_experiment_with"
 
-sample_num: 0
+sample_num: 200
 
 
 lora:
@@ -15,20 +15,22 @@ lora:
 
 training:
     # Training Parameters
-    num_train_epochs: 1
-    max_steps: 1000
-    assistant_only_loss: True
+    num_train_epochs: 2
+    max_steps: -1
+    assistant_only_loss: True  # Requires patched chat template
+    add_generation_prompt: False  # Should be set to False for training
     learning_rate: 5.0e-6
     lr_scheduler_type: "cosine"
-    warmup_steps: 100
-    max_grad_norm: 1.0
+    warmup_steps: 50
+    max_grad_norm: 5.0
 
     # Batch Size & DataLoading
     per_device_train_batch_size: 4
     gradient_accumulation_steps: 8
     dataloader_num_workers: 4
     packing: True
-    
+    packing_strategy: "wrapped"  # "bfd" throws away overflow tokens, "bfd_split" splits longer into chunks, "wrapped" all tokens are concatenated into a stream and split into a fixed-length blocks
+    padding_side: "right"  # need to be left for GRPO (does generation)
 
     # Logging
     logging_steps: 10
@@ -37,3 +39,6 @@ training:
     eval_steps: 20
     report_to: ["mlflow"]
     output_dir: "/storage/granite-sft-train/lr_5e-6_1_grad_clip_assist_only"
+
+inference:
+    padding_side: "left"
