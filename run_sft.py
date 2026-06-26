@@ -25,7 +25,7 @@ def load_data(dataset_name: str, sample_num: int = 0):
 
 def get_trainer(train_config: dict, train_ds, end_ds):
     model_name = train_config["model_name"]
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name, **train_config["tokenizer"])
     
     if train_config["training"]["assistant_only_loss"]:
         with open("granite_chat_template_assistant_only_loss.txt", "r") as file:
@@ -89,6 +89,8 @@ if __name__ == "__main__":
             "model":   train_config["model_name"],
             "dataset": train_config["dataset_name"],
         })
+
+        mlflow.log_artifact(args.config_name)
         
         print("--- Starting Training ---")
         trainer.train()

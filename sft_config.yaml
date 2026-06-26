@@ -2,35 +2,38 @@
 dataset_name: "HuggingFaceH4/ultrafeedback_binarized"
 model_name: "ibm-granite/granite-4.0-350m"
 experiment_name: "granite-ultrafeedback"
-run_name: "assistant_only_loss_experiment_with"
+run_name: "batch_size_1_acc_4"
 
-sample_num: 200
+sample_num: 2000
 
-
+tokenizer:
+    add_generation_prompt: False  # Should be set to False for training
+    train_padding_side: "right"  # need to be left for GRPO (does generation)
+    gen_padding_side: "left"
+    
 lora:
     use_lora: True
     lora_rank: 16
-    lora_alpha: 32
+    lora_alpha: 32  # common to keep 2xr -> influences how strongly the frozen weights get updated: output = base_layer(x) + (alpha / r) * B(A(x))
     target_modules: "all-linear"
 
 training:
     # Training Parameters
-    num_train_epochs: 2
+    num_train_epochs: 3
     max_steps: -1
-    assistant_only_loss: True  # Requires patched chat template
-    add_generation_prompt: False  # Should be set to False for training
+    assistant_only_loss: True  # Requires patched chat template    
     learning_rate: 5.0e-6
     lr_scheduler_type: "cosine"
-    warmup_steps: 50
+    warmup_steps: 200
     max_grad_norm: 5.0
 
     # Batch Size & DataLoading
-    per_device_train_batch_size: 4
-    gradient_accumulation_steps: 8
+    per_device_train_batch_size: 1
+    gradient_accumulation_steps: 4
     dataloader_num_workers: 4
     packing: True
     packing_strategy: "wrapped"  # "bfd" throws away overflow tokens, "bfd_split" splits longer into chunks, "wrapped" all tokens are concatenated into a stream and split into a fixed-length blocks
-    padding_side: "right"  # need to be left for GRPO (does generation)
+    
 
     # Logging
     logging_steps: 10
@@ -38,7 +41,4 @@ training:
     eval_strategy: "steps"
     eval_steps: 20
     report_to: ["mlflow"]
-    output_dir: "/storage/granite-sft-train/lr_5e-6_1_grad_clip_assist_only"
-
-inference:
-    padding_side: "left"
+    output_dir: "/storage/granite-sft-train/batch_size_1_acc_4"
