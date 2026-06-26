@@ -112,3 +112,4 @@
 {%- endfor %}
 {%- if add_generation_prompt %}
     {{- '<|start_of_role|>assistant<|end_of_role|>' }}
+{%- endif %}
